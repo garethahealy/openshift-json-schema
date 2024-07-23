@@ -11,7 +11,7 @@ generate_all_schemas() {
 }
 
 full_ocp_version=$(oc version -o json | jq -r '.openshiftVersion')
-ocp_version="${full_ocp_version::-3}"
+ocp_version=$(echo "${full_ocp_version}" | cut -c -4)
 
 echo "oc version returned '${full_ocp_version}', using '${ocp_version}'"
 
