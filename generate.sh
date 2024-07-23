@@ -12,8 +12,9 @@ generate_all_schemas() {
 
 full_ocp_version=$(oc version -o json | jq -r '.openshiftVersion')
 ocp_version=$(echo "${full_ocp_version}" | cut -c -4)
+normalized_ocp_version="v${ocp_version}.0"
 
-echo "oc version returned '${full_ocp_version}', using '${ocp_version}'"
+echo "oc version returned '${full_ocp_version}', using '${normalized_ocp_version}'"
 
-download_remote_schema ${ocp_version}
-generate_all_schemas ${ocp_version}
+download_remote_schema ${normalized_ocp_version}
+generate_all_schemas ${normalized_ocp_version}
