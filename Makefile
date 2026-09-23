@@ -7,8 +7,9 @@ OCP_SCHEMA_VERSION ?= 4.19.0
 
 help:
 	@echo "Available targets:"
-	@echo "  generate  Generate schemas from the logged-in OpenShift cluster"
-	@echo "  test      Run kubeconform smoke tests against sample fixtures"
+	@echo "  generate  		Generate schemas from the logged-in OpenShift cluster"
+	@echo "  test      		Run kubeconform smoke tests against sample fixtures"
+	@echo "  test-failure   Run kubeconform smoke tests against sample fixtures that should fail"
 
 generate:
 	@bash ./generate.sh
@@ -23,5 +24,14 @@ test:
 		-schema-location "$(CURDIR)/{{ .NormalizedKubernetesVersion }}/schemas/{{ .ResourceKind }}{{ .KindSuffix }}.json" \
 		test/fixtures/route.yaml \
 		test/fixtures/securitycontextconstraints.yaml \
-		test/fixtures/deployment.yaml \
+		test/fixtures/deployment.yaml
+
+test-failure:
+	podman run --rm \
+		-v "$(CURDIR):$(CURDIR)" \
+		-w "$(CURDIR)" \
+		$(KUBECONFORM_IMAGE) \
+		-summary \
+		-kubernetes-version $(OCP_SCHEMA_VERSION) \
+		-schema-location "$(CURDIR)/{{ .NormalizedKubernetesVersion }}/schemas/{{ .ResourceKind }}{{ .KindSuffix }}.json" \
 		test/fixtures/bad-deployment.yaml
